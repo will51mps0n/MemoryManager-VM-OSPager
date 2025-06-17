@@ -1,0 +1,64 @@
+Mapping file name to sb file 
+Attempting to map 10 consecutive files from papers.txt 
+Mapping page 0
+Mapping page 0 success 
+Mapping page 1
+Mapping page 1 success 
+Mapping page 2
+Mapping page 2 success 
+Mapping page 3
+Mapping page 3 success 
+Mapping page 4
+Mapping page 4 success 
+Mapping page 5
+Mapping page 5 success 
+Mapping page 6
+Mapping page 6 success 
+Mapping page 7
+Mapping page 7 success 
+Mapping page 8
+Mapping page 8 success 
+Mapping page 9
+Mapping page 9 success 
+Mapping all 10 files successful 
+Now attempting to read a block from each page
+First char of page 0: Z
+First char of page 1: X
+First char of page 2: Z
+First char of page 3: X
+First char of page 4: Z
+First char of page 5: X
+Done reading pages. Assuming block size 4, blocks 6 7 8 and 9 should be resident
+Writing to page 0
+Writing to page 1
+Writing to page 2
+Writing to page 3
+If block size = 4, pages 0 - 4 should now be resident as we just wrote to them. All should be dirty but not written yet
+Making 2 new pages from 0 and 1 block of file name. Both resident so write sholdnt have happened yet
+New page to same file, block 0 char = X old page to file block 0, which should be different as we wrote to it = X
+New page to same file, block 1 char = a old page to file block 1, which should be different as we wrote to it = X
+Reading from each page so the dirty gets written
+First char of page 0: X
+First char of page 1: X
+First char of page 2: X
+First char of page 3: X
+First char of page 4: X
+First char of page 5: X
+First char of page 6: X
+First char of page 7: X
+First char of page 8: X
+First char of page 9: X
+First char of page0 copy X - First char of page1 copy a
+Making 2 new pages from 2, 3, and 10 block of file name. Both should have been evicted so write sholdnt have happened yet
+First char of page 2 copy: A
+First char of page 3 copy: A
+First char of page 10 copy: A
+Writing A to pg 2 copy
+First char of page2 copy: A
+First char of page2: Xapers.txt
+Now for page 10 copy, write the same thing to memory thats in the original page already
+First char of page10 copy: X
+First char of page10: X
+First char of page3 copy: X
+one more test A
+Done with tests

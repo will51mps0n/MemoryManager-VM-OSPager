@@ -1,0 +1,16 @@
+Running failing tests with debug:
+
+Running test_FB_multi_write.4 with debugging:
+debug out:
+
+normal out:
+
+
+ ../test_SB_cross_page_filenameß.4 not found
+
+Running test_SB_swap_evict_load.4 with debugging:
+debug out:
+
+normal out:
+
+

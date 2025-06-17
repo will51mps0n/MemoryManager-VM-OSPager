@@ -1,0 +1,30 @@
+In main
+ 
+In parent1
+Creating a FB file in parent to same file as child
+Writing to shared file back 
+Reading from shared after write 
+A
+ALL DONE
+In parent2
+Creating a FB file in parent to same file as child
+Writing to shared file back 
+Reading from shared after write 
+A
+In child 2
+Creating a FB file 
+Writing to shared file back 
+Reading to shared file back 
+A
+ALL DONE
+In child 1
+Creating a FB file 
+Writing to shared file back 
+Reading to shared file back 
+A
+In child 2
+Creating a FB file 
+Writing to shared file back 
+Reading to shared file back 
+A
+ALL DONE

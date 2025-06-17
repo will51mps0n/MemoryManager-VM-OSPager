@@ -1,0 +1,11 @@
+Creating 4 swap back pages
+Filling the pages
+Done filling the pages
+Making a new page. Swap back and empty
+Write to the new page, which should evict page 0
+Read from the page 0 that was evicted. Should recover this swap backed page
+Recovered the page: A
+Reference the page: E
+Recovered the 2nd page: M
+Recovered the page: A
+Reference the page: E

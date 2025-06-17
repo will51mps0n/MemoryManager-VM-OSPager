@@ -1,0 +1,216 @@
+(lldb) target create "../test_FB_multi_write.4"
+Current executable set to '/Users/adamsimpson/Desktop/eecs/eecs482/project3/adwisi.ecomini.skis.3/test_FB_multi_write.4' (arm64).
+(lldb) run
+Process 78392 stopped
+* thread #1, queue = 'com.apple.main-thread', stop reason = EXC_BAD_ACCESS (code=2, address=0x5ffff0000)
+    frame #0: 0x00000001000033f0 test_FB_multi_write.4`___lldb_unnamed_symbol343 + 700
+test_FB_multi_write.4`___lldb_unnamed_symbol343:
+->  0x1000033f0 <+700>: strb   wzr, [x9]
+    0x1000033f4 <+704>: ldr    x0, [x8, #0x38]
+    0x1000033f8 <+708>: mov    x1, #0x10000              ; =65536 
+    0x1000033fc <+712>: bl     0x100007104               ; symbol stub for: munmap
+Target 0: (test_FB_multi_write.4) stopped.
+Process 78392 launched: '/Users/adamsimpson/Desktop/eecs/eecs482/project3/adwisi.ecomini.skis.3/test_FB_multi_write.4' (arm64)
+(lldb) bt all
+* thread #1, queue = 'com.apple.main-thread', stop reason = EXC_BAD_ACCESS (code=2, address=0x5ffff0000)
+  * frame #0: 0x00000001000033f0 test_FB_multi_write.4`___lldb_unnamed_symbol343 + 700
+    frame #1: 0x0000000100002a8c test_FB_multi_write.4`___lldb_unnamed_symbol340 + 44
+    frame #2: 0x0000000100004498 test_FB_multi_write.4`initial_util::initial_util() + 28
+    frame #3: 0x00000001000029f0 test_FB_multi_write.4`initial_util::initial_util() + 28
+    frame #4: 0x0000000100006ee4 test_FB_multi_write.4`___lldb_unnamed_symbol412 + 20
+    frame #5: 0x0000000100006ef8 test_FB_multi_write.4`___lldb_unnamed_symbol413 + 12
+    frame #6: 0x0000000185eb2608 dyld`invocation function for block in dyld4::Loader::findAndRunAllInitializers(dyld4::RuntimeState&) const::$_0::operator()() const + 168
+    frame #7: 0x0000000185ef0d6c dyld`invocation function for block in dyld3::MachOAnalyzer::forEachInitializer(Diagnostics&, dyld3::MachOAnalyzer::VMAddrConverter const&, void (unsigned int) block_pointer, void const*) const + 340
+    frame #8: 0x0000000185ee4400 dyld`invocation function for block in dyld3::MachOFile::forEachSection(void (dyld3::MachOFile::SectionInfo const&, bool, bool&) block_pointer) const + 496
+    frame #9: 0x0000000185e932fc dyld`dyld3::MachOFile::forEachLoadCommand(Diagnostics&, void (load_command const*, bool&) block_pointer) const + 300
+    frame #10: 0x0000000185ee3394 dyld`dyld3::MachOFile::forEachSection(void (dyld3::MachOFile::SectionInfo const&, bool, bool&) block_pointer) const + 192
+    frame #11: 0x0000000185ef0880 dyld`dyld3::MachOAnalyzer::forEachInitializer(Diagnostics&, dyld3::MachOAnalyzer::VMAddrConverter const&, void (unsigned int) block_pointer, void const*) const + 516
+    frame #12: 0x0000000185eae53c dyld`dyld4::Loader::findAndRunAllInitializers(dyld4::RuntimeState&) const + 564
+    frame #13: 0x0000000185eb4bc0 dyld`dyld4::JustInTimeLoader::runInitializers(dyld4::RuntimeState&) const + 36
+    frame #14: 0x0000000185eae984 dyld`dyld4::Loader::runInitializersBottomUp(dyld4::RuntimeState&, dyld3::Array<dyld4::Loader const*>&) const + 220
+    frame #15: 0x0000000185eb2698 dyld`dyld4::Loader::runInitializersBottomUpPlusUpwardLinks(dyld4::RuntimeState&) const::$_1::operator()() const + 116
+    frame #16: 0x0000000185eaeb78 dyld`dyld4::Loader::runInitializersBottomUpPlusUpwardLinks(dyld4::RuntimeState&) const + 420
+    frame #17: 0x0000000185ed1e3c dyld`dyld4::APIs::runAllInitializersForMain() + 464
+    frame #18: 0x0000000185e98010 dyld`dyld4::prepare(dyld4::APIs&, dyld3::MachOAnalyzer const*) + 3156
+    frame #19: 0x0000000185e96ef4 dyld`start + 1868
+(lldb) quit
+(lldb) target create "../test_FB_multi_write.4"
+Current executable set to '/Users/adamsimpson/Desktop/eecs/eecs482/project3/adwisi.ecomini.skis.3/test_FB_multi_write.4' (arm64).
+(lldb) run
+Process 78486 stopped
+* thread #1, queue = 'com.apple.main-thread', stop reason = EXC_BAD_ACCESS (code=2, address=0x5ffff0000)
+    frame #0: 0x00000001000033f0 test_FB_multi_write.4`___lldb_unnamed_symbol343 + 700
+test_FB_multi_write.4`___lldb_unnamed_symbol343:
+->  0x1000033f0 <+700>: strb   wzr, [x9]
+    0x1000033f4 <+704>: ldr    x0, [x8, #0x38]
+    0x1000033f8 <+708>: mov    x1, #0x10000              ; =65536 
+    0x1000033fc <+712>: bl     0x100007104               ; symbol stub for: munmap
+Target 0: (test_FB_multi_write.4) stopped.
+Process 78486 launched: '/Users/adamsimpson/Desktop/eecs/eecs482/project3/adwisi.ecomini.skis.3/test_FB_multi_write.4' (arm64)
+(lldb) bt all
+* thread #1, queue = 'com.apple.main-thread', stop reason = EXC_BAD_ACCESS (code=2, address=0x5ffff0000)
+  * frame #0: 0x00000001000033f0 test_FB_multi_write.4`___lldb_unnamed_symbol343 + 700
+    frame #1: 0x0000000100002a8c test_FB_multi_write.4`___lldb_unnamed_symbol340 + 44
+    frame #2: 0x0000000100004498 test_FB_multi_write.4`initial_util::initial_util() + 28
+    frame #3: 0x00000001000029f0 test_FB_multi_write.4`initial_util::initial_util() + 28
+    frame #4: 0x0000000100006ee4 test_FB_multi_write.4`___lldb_unnamed_symbol412 + 20
+    frame #5: 0x0000000100006ef8 test_FB_multi_write.4`___lldb_unnamed_symbol413 + 12
+    frame #6: 0x0000000185eb2608 dyld`invocation function for block in dyld4::Loader::findAndRunAllInitializers(dyld4::RuntimeState&) const::$_0::operator()() const + 168
+    frame #7: 0x0000000185ef0d6c dyld`invocation function for block in dyld3::MachOAnalyzer::forEachInitializer(Diagnostics&, dyld3::MachOAnalyzer::VMAddrConverter const&, void (unsigned int) block_pointer, void const*) const + 340
+    frame #8: 0x0000000185ee4400 dyld`invocation function for block in dyld3::MachOFile::forEachSection(void (dyld3::MachOFile::SectionInfo const&, bool, bool&) block_pointer) const + 496
+    frame #9: 0x0000000185e932fc dyld`dyld3::MachOFile::forEachLoadCommand(Diagnostics&, void (load_command const*, bool&) block_pointer) const + 300
+    frame #10: 0x0000000185ee3394 dyld`dyld3::MachOFile::forEachSection(void (dyld3::MachOFile::SectionInfo const&, bool, bool&) block_pointer) const + 192
+    frame #11: 0x0000000185ef0880 dyld`dyld3::MachOAnalyzer::forEachInitializer(Diagnostics&, dyld3::MachOAnalyzer::VMAddrConverter const&, void (unsigned int) block_pointer, void const*) const + 516
+    frame #12: 0x0000000185eae53c dyld`dyld4::Loader::findAndRunAllInitializers(dyld4::RuntimeState&) const + 564
+    frame #13: 0x0000000185eb4bc0 dyld`dyld4::JustInTimeLoader::runInitializers(dyld4::RuntimeState&) const + 36
+    frame #14: 0x0000000185eae984 dyld`dyld4::Loader::runInitializersBottomUp(dyld4::RuntimeState&, dyld3::Array<dyld4::Loader const*>&) const + 220
+    frame #15: 0x0000000185eb2698 dyld`dyld4::Loader::runInitializersBottomUpPlusUpwardLinks(dyld4::RuntimeState&) const::$_1::operator()() const + 116
+    frame #16: 0x0000000185eaeb78 dyld`dyld4::Loader::runInitializersBottomUpPlusUpwardLinks(dyld4::RuntimeState&) const + 420
+    frame #17: 0x0000000185ed1e3c dyld`dyld4::APIs::runAllInitializersForMain() + 464
+    frame #18: 0x0000000185e98010 dyld`dyld4::prepare(dyld4::APIs&, dyld3::MachOAnalyzer const*) + 3156
+    frame #19: 0x0000000185e96ef4 dyld`start + 1868
+(lldb) quit
+(lldb) target create "../test_FB_multi_write.4"
+Current executable set to '/Users/adamsimpson/Desktop/eecs/eecs482/project3/adwisi.ecomini.skis.3/test_FB_multi_write.4' (arm64).
+(lldb) run
+Process 78613 stopped
+* thread #1, queue = 'com.apple.main-thread', stop reason = EXC_BAD_ACCESS (code=2, address=0x5ffff0000)
+    frame #0: 0x00000001000033f0 test_FB_multi_write.4`___lldb_unnamed_symbol343 + 700
+test_FB_multi_write.4`___lldb_unnamed_symbol343:
+->  0x1000033f0 <+700>: strb   wzr, [x9]
+    0x1000033f4 <+704>: ldr    x0, [x8, #0x38]
+    0x1000033f8 <+708>: mov    x1, #0x10000              ; =65536 
+    0x1000033fc <+712>: bl     0x100007104               ; symbol stub for: munmap
+Target 0: (test_FB_multi_write.4) stopped.
+Process 78613 launched: '/Users/adamsimpson/Desktop/eecs/eecs482/project3/adwisi.ecomini.skis.3/test_FB_multi_write.4' (arm64)
+(lldb) bt all
+* thread #1, queue = 'com.apple.main-thread', stop reason = EXC_BAD_ACCESS (code=2, address=0x5ffff0000)
+  * frame #0: 0x00000001000033f0 test_FB_multi_write.4`___lldb_unnamed_symbol343 + 700
+    frame #1: 0x0000000100002a8c test_FB_multi_write.4`___lldb_unnamed_symbol340 + 44
+    frame #2: 0x0000000100004498 test_FB_multi_write.4`initial_util::initial_util() + 28
+    frame #3: 0x00000001000029f0 test_FB_multi_write.4`initial_util::initial_util() + 28
+    frame #4: 0x0000000100006ee4 test_FB_multi_write.4`___lldb_unnamed_symbol412 + 20
+    frame #5: 0x0000000100006ef8 test_FB_multi_write.4`___lldb_unnamed_symbol413 + 12
+    frame #6: 0x0000000185eb2608 dyld`invocation function for block in dyld4::Loader::findAndRunAllInitializers(dyld4::RuntimeState&) const::$_0::operator()() const + 168
+    frame #7: 0x0000000185ef0d6c dyld`invocation function for block in dyld3::MachOAnalyzer::forEachInitializer(Diagnostics&, dyld3::MachOAnalyzer::VMAddrConverter const&, void (unsigned int) block_pointer, void const*) const + 340
+    frame #8: 0x0000000185ee4400 dyld`invocation function for block in dyld3::MachOFile::forEachSection(void (dyld3::MachOFile::SectionInfo const&, bool, bool&) block_pointer) const + 496
+    frame #9: 0x0000000185e932fc dyld`dyld3::MachOFile::forEachLoadCommand(Diagnostics&, void (load_command const*, bool&) block_pointer) const + 300
+    frame #10: 0x0000000185ee3394 dyld`dyld3::MachOFile::forEachSection(void (dyld3::MachOFile::SectionInfo const&, bool, bool&) block_pointer) const + 192
+    frame #11: 0x0000000185ef0880 dyld`dyld3::MachOAnalyzer::forEachInitializer(Diagnostics&, dyld3::MachOAnalyzer::VMAddrConverter const&, void (unsigned int) block_pointer, void const*) const + 516
+    frame #12: 0x0000000185eae53c dyld`dyld4::Loader::findAndRunAllInitializers(dyld4::RuntimeState&) const + 564
+    frame #13: 0x0000000185eb4bc0 dyld`dyld4::JustInTimeLoader::runInitializers(dyld4::RuntimeState&) const + 36
+    frame #14: 0x0000000185eae984 dyld`dyld4::Loader::runInitializersBottomUp(dyld4::RuntimeState&, dyld3::Array<dyld4::Loader const*>&) const + 220
+    frame #15: 0x0000000185eb2698 dyld`dyld4::Loader::runInitializersBottomUpPlusUpwardLinks(dyld4::RuntimeState&) const::$_1::operator()() const + 116
+    frame #16: 0x0000000185eaeb78 dyld`dyld4::Loader::runInitializersBottomUpPlusUpwardLinks(dyld4::RuntimeState&) const + 420
+    frame #17: 0x0000000185ed1e3c dyld`dyld4::APIs::runAllInitializersForMain() + 464
+    frame #18: 0x0000000185e98010 dyld`dyld4::prepare(dyld4::APIs&, dyld3::MachOAnalyzer const*) + 3156
+    frame #19: 0x0000000185e96ef4 dyld`start + 1868
+(lldb) quit
+(lldb) target create "../test_FB_multi_write.4"
+Current executable set to '/Users/adamsimpson/Desktop/eecs/eecs482/project3/adwisi.ecomini.skis.3/test_FB_multi_write.4' (arm64).
+(lldb) run
+Process 78700 stopped
+* thread #1, queue = 'com.apple.main-thread', stop reason = EXC_BAD_ACCESS (code=2, address=0x5ffff0000)
+    frame #0: 0x00000001000033f0 test_FB_multi_write.4`___lldb_unnamed_symbol343 + 700
+test_FB_multi_write.4`___lldb_unnamed_symbol343:
+->  0x1000033f0 <+700>: strb   wzr, [x9]
+    0x1000033f4 <+704>: ldr    x0, [x8, #0x38]
+    0x1000033f8 <+708>: mov    x1, #0x10000              ; =65536 
+    0x1000033fc <+712>: bl     0x100007104               ; symbol stub for: munmap
+Target 0: (test_FB_multi_write.4) stopped.
+Process 78700 launched: '/Users/adamsimpson/Desktop/eecs/eecs482/project3/adwisi.ecomini.skis.3/test_FB_multi_write.4' (arm64)
+(lldb) bt all
+* thread #1, queue = 'com.apple.main-thread', stop reason = EXC_BAD_ACCESS (code=2, address=0x5ffff0000)
+  * frame #0: 0x00000001000033f0 test_FB_multi_write.4`___lldb_unnamed_symbol343 + 700
+    frame #1: 0x0000000100002a8c test_FB_multi_write.4`___lldb_unnamed_symbol340 + 44
+    frame #2: 0x0000000100004498 test_FB_multi_write.4`initial_util::initial_util() + 28
+    frame #3: 0x00000001000029f0 test_FB_multi_write.4`initial_util::initial_util() + 28
+    frame #4: 0x0000000100006ee4 test_FB_multi_write.4`___lldb_unnamed_symbol412 + 20
+    frame #5: 0x0000000100006ef8 test_FB_multi_write.4`___lldb_unnamed_symbol413 + 12
+    frame #6: 0x0000000185eb2608 dyld`invocation function for block in dyld4::Loader::findAndRunAllInitializers(dyld4::RuntimeState&) const::$_0::operator()() const + 168
+    frame #7: 0x0000000185ef0d6c dyld`invocation function for block in dyld3::MachOAnalyzer::forEachInitializer(Diagnostics&, dyld3::MachOAnalyzer::VMAddrConverter const&, void (unsigned int) block_pointer, void const*) const + 340
+    frame #8: 0x0000000185ee4400 dyld`invocation function for block in dyld3::MachOFile::forEachSection(void (dyld3::MachOFile::SectionInfo const&, bool, bool&) block_pointer) const + 496
+    frame #9: 0x0000000185e932fc dyld`dyld3::MachOFile::forEachLoadCommand(Diagnostics&, void (load_command const*, bool&) block_pointer) const + 300
+    frame #10: 0x0000000185ee3394 dyld`dyld3::MachOFile::forEachSection(void (dyld3::MachOFile::SectionInfo const&, bool, bool&) block_pointer) const + 192
+    frame #11: 0x0000000185ef0880 dyld`dyld3::MachOAnalyzer::forEachInitializer(Diagnostics&, dyld3::MachOAnalyzer::VMAddrConverter const&, void (unsigned int) block_pointer, void const*) const + 516
+    frame #12: 0x0000000185eae53c dyld`dyld4::Loader::findAndRunAllInitializers(dyld4::RuntimeState&) const + 564
+    frame #13: 0x0000000185eb4bc0 dyld`dyld4::JustInTimeLoader::runInitializers(dyld4::RuntimeState&) const + 36
+    frame #14: 0x0000000185eae984 dyld`dyld4::Loader::runInitializersBottomUp(dyld4::RuntimeState&, dyld3::Array<dyld4::Loader const*>&) const + 220
+    frame #15: 0x0000000185eb2698 dyld`dyld4::Loader::runInitializersBottomUpPlusUpwardLinks(dyld4::RuntimeState&) const::$_1::operator()() const + 116
+    frame #16: 0x0000000185eaeb78 dyld`dyld4::Loader::runInitializersBottomUpPlusUpwardLinks(dyld4::RuntimeState&) const + 420
+    frame #17: 0x0000000185ed1e3c dyld`dyld4::APIs::runAllInitializersForMain() + 464
+    frame #18: 0x0000000185e98010 dyld`dyld4::prepare(dyld4::APIs&, dyld3::MachOAnalyzer const*) + 3156
+    frame #19: 0x0000000185e96ef4 dyld`start + 1868
+(lldb) quit
+(lldb) target create "../test_FB_multi_write.4"
+Current executable set to '/Users/adamsimpson/Desktop/eecs/eecs482/project3/adwisi.ecomini.skis.3/test_FB_multi_write.4' (arm64).
+(lldb) run
+Process 79243 stopped
+* thread #1, queue = 'com.apple.main-thread', stop reason = EXC_BAD_ACCESS (code=2, address=0x5ffff0000)
+    frame #0: 0x00000001000033f0 test_FB_multi_write.4`___lldb_unnamed_symbol343 + 700
+test_FB_multi_write.4`___lldb_unnamed_symbol343:
+->  0x1000033f0 <+700>: strb   wzr, [x9]
+    0x1000033f4 <+704>: ldr    x0, [x8, #0x38]
+    0x1000033f8 <+708>: mov    x1, #0x10000              ; =65536 
+    0x1000033fc <+712>: bl     0x100007104               ; symbol stub for: munmap
+Target 0: (test_FB_multi_write.4) stopped.
+Process 79243 launched: '/Users/adamsimpson/Desktop/eecs/eecs482/project3/adwisi.ecomini.skis.3/test_FB_multi_write.4' (arm64)
+(lldb) bt all
+* thread #1, queue = 'com.apple.main-thread', stop reason = EXC_BAD_ACCESS (code=2, address=0x5ffff0000)
+  * frame #0: 0x00000001000033f0 test_FB_multi_write.4`___lldb_unnamed_symbol343 + 700
+    frame #1: 0x0000000100002a8c test_FB_multi_write.4`___lldb_unnamed_symbol340 + 44
+    frame #2: 0x0000000100004498 test_FB_multi_write.4`initial_util::initial_util() + 28
+    frame #3: 0x00000001000029f0 test_FB_multi_write.4`initial_util::initial_util() + 28
+    frame #4: 0x0000000100006ee4 test_FB_multi_write.4`___lldb_unnamed_symbol412 + 20
+    frame #5: 0x0000000100006ef8 test_FB_multi_write.4`___lldb_unnamed_symbol413 + 12
+    frame #6: 0x0000000185eb2608 dyld`invocation function for block in dyld4::Loader::findAndRunAllInitializers(dyld4::RuntimeState&) const::$_0::operator()() const + 168
+    frame #7: 0x0000000185ef0d6c dyld`invocation function for block in dyld3::MachOAnalyzer::forEachInitializer(Diagnostics&, dyld3::MachOAnalyzer::VMAddrConverter const&, void (unsigned int) block_pointer, void const*) const + 340
+    frame #8: 0x0000000185ee4400 dyld`invocation function for block in dyld3::MachOFile::forEachSection(void (dyld3::MachOFile::SectionInfo const&, bool, bool&) block_pointer) const + 496
+    frame #9: 0x0000000185e932fc dyld`dyld3::MachOFile::forEachLoadCommand(Diagnostics&, void (load_command const*, bool&) block_pointer) const + 300
+    frame #10: 0x0000000185ee3394 dyld`dyld3::MachOFile::forEachSection(void (dyld3::MachOFile::SectionInfo const&, bool, bool&) block_pointer) const + 192
+    frame #11: 0x0000000185ef0880 dyld`dyld3::MachOAnalyzer::forEachInitializer(Diagnostics&, dyld3::MachOAnalyzer::VMAddrConverter const&, void (unsigned int) block_pointer, void const*) const + 516
+    frame #12: 0x0000000185eae53c dyld`dyld4::Loader::findAndRunAllInitializers(dyld4::RuntimeState&) const + 564
+    frame #13: 0x0000000185eb4bc0 dyld`dyld4::JustInTimeLoader::runInitializers(dyld4::RuntimeState&) const + 36
+    frame #14: 0x0000000185eae984 dyld`dyld4::Loader::runInitializersBottomUp(dyld4::RuntimeState&, dyld3::Array<dyld4::Loader const*>&) const + 220
+    frame #15: 0x0000000185eb2698 dyld`dyld4::Loader::runInitializersBottomUpPlusUpwardLinks(dyld4::RuntimeState&) const::$_1::operator()() const + 116
+    frame #16: 0x0000000185eaeb78 dyld`dyld4::Loader::runInitializersBottomUpPlusUpwardLinks(dyld4::RuntimeState&) const + 420
+    frame #17: 0x0000000185ed1e3c dyld`dyld4::APIs::runAllInitializersForMain() + 464
+    frame #18: 0x0000000185e98010 dyld`dyld4::prepare(dyld4::APIs&, dyld3::MachOAnalyzer const*) + 3156
+    frame #19: 0x0000000185e96ef4 dyld`start + 1868
+(lldb) quit
+(lldb) target create "../test_FB_multi_write.4"
+Current executable set to '/Users/adamsimpson/Desktop/eecs/eecs482/project3/adwisi.ecomini.skis.3/test_FB_multi_write.4' (arm64).
+(lldb) run
+Process 79356 stopped
+* thread #1, queue = 'com.apple.main-thread', stop reason = EXC_BAD_ACCESS (code=2, address=0x5ffff0000)
+    frame #0: 0x00000001000033f0 test_FB_multi_write.4`___lldb_unnamed_symbol343 + 700
+test_FB_multi_write.4`___lldb_unnamed_symbol343:
+->  0x1000033f0 <+700>: strb   wzr, [x9]
+    0x1000033f4 <+704>: ldr    x0, [x8, #0x38]
+    0x1000033f8 <+708>: mov    x1, #0x10000              ; =65536 
+    0x1000033fc <+712>: bl     0x100007104               ; symbol stub for: munmap
+Target 0: (test_FB_multi_write.4) stopped.
+Process 79356 launched: '/Users/adamsimpson/Desktop/eecs/eecs482/project3/adwisi.ecomini.skis.3/test_FB_multi_write.4' (arm64)
+(lldb) bt all
+* thread #1, queue = 'com.apple.main-thread', stop reason = EXC_BAD_ACCESS (code=2, address=0x5ffff0000)
+  * frame #0: 0x00000001000033f0 test_FB_multi_write.4`___lldb_unnamed_symbol343 + 700
+    frame #1: 0x0000000100002a8c test_FB_multi_write.4`___lldb_unnamed_symbol340 + 44
+    frame #2: 0x0000000100004498 test_FB_multi_write.4`initial_util::initial_util() + 28
+    frame #3: 0x00000001000029f0 test_FB_multi_write.4`initial_util::initial_util() + 28
+    frame #4: 0x0000000100006ee4 test_FB_multi_write.4`___lldb_unnamed_symbol412 + 20
+    frame #5: 0x0000000100006ef8 test_FB_multi_write.4`___lldb_unnamed_symbol413 + 12
+    frame #6: 0x0000000185eb2608 dyld`invocation function for block in dyld4::Loader::findAndRunAllInitializers(dyld4::RuntimeState&) const::$_0::operator()() const + 168
+    frame #7: 0x0000000185ef0d6c dyld`invocation function for block in dyld3::MachOAnalyzer::forEachInitializer(Diagnostics&, dyld3::MachOAnalyzer::VMAddrConverter const&, void (unsigned int) block_pointer, void const*) const + 340
+    frame #8: 0x0000000185ee4400 dyld`invocation function for block in dyld3::MachOFile::forEachSection(void (dyld3::MachOFile::SectionInfo const&, bool, bool&) block_pointer) const + 496
+    frame #9: 0x0000000185e932fc dyld`dyld3::MachOFile::forEachLoadCommand(Diagnostics&, void (load_command const*, bool&) block_pointer) const + 300
+    frame #10: 0x0000000185ee3394 dyld`dyld3::MachOFile::forEachSection(void (dyld3::MachOFile::SectionInfo const&, bool, bool&) block_pointer) const + 192
+    frame #11: 0x0000000185ef0880 dyld`dyld3::MachOAnalyzer::forEachInitializer(Diagnostics&, dyld3::MachOAnalyzer::VMAddrConverter const&, void (unsigned int) block_pointer, void const*) const + 516
+    frame #12: 0x0000000185eae53c dyld`dyld4::Loader::findAndRunAllInitializers(dyld4::RuntimeState&) const + 564
+    frame #13: 0x0000000185eb4bc0 dyld`dyld4::JustInTimeLoader::runInitializers(dyld4::RuntimeState&) const + 36
+    frame #14: 0x0000000185eae984 dyld`dyld4::Loader::runInitializersBottomUp(dyld4::RuntimeState&, dyld3::Array<dyld4::Loader const*>&) const + 220
+    frame #15: 0x0000000185eb2698 dyld`dyld4::Loader::runInitializersBottomUpPlusUpwardLinks(dyld4::RuntimeState&) const::$_1::operator()() const + 116
+    frame #16: 0x0000000185eaeb78 dyld`dyld4::Loader::runInitializersBottomUpPlusUpwardLinks(dyld4::RuntimeState&) const + 420
+    frame #17: 0x0000000185ed1e3c dyld`dyld4::APIs::runAllInitializersForMain() + 464
+    frame #18: 0x0000000185e98010 dyld`dyld4::prepare(dyld4::APIs&, dyld3::MachOAnalyzer const*) + 3156
+    frame #19: 0x0000000185e96ef4 dyld`start + 1868
+(lldb) quit

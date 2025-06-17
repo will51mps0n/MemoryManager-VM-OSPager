@@ -1,0 +1,11 @@
+Creating page through fork on an empty arena
+In parent
+Created 3 pages and writing to all of them
+In the child case, making a swap back page
+Write to child page 0
+
+Done with test
+DONE
+DONE
+
+Done with test

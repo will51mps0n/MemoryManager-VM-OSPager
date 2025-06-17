@@ -1,0 +1,49 @@
+Pager started with 4 physical memory pages
+vm_create       (48877, 61739)
+vm_create returned 0
+vm_switch       (61739)
+                                        returning to (61739) with r|w pages:
+vm_map          (0x0, 0)
+vm_map returned 0x600000000
+                                        returning to (61739) with r|w pages:
+                                        r       vpage 0x60000   ppage 0x0
+vm_map          (0x0, 0)
+vm_map returned 0x600010000
+                                        returning to (61739) with r|w pages:
+                                        r       vpage 0x60000   ppage 0x0
+                                        r       vpage 0x60001   ppage 0x0
+vm_fault        (0x60000fffc, write)
+vm_fault returned 0
+                                        returning to (61739) with r|w pages:
+                                        rw      vpage 0x60000   ppage 0x1
+                                        r       vpage 0x60001   ppage 0x0
+vm_fault        (0x600010000, write)
+vm_fault returned 0
+                                        returning to (61739) with r|w pages:
+                                        rw      vpage 0x60000   ppage 0x1
+                                        rw      vpage 0x60001   ppage 0x2
+vm_map          (0x60000fffc, 0)
+vm_map returned 0x600020000
+                                        returning to (61739) with r|w pages:
+                                        rw      vpage 0x60000   ppage 0x1
+                                        rw      vpage 0x60001   ppage 0x2
+vm_map          (0x60001fffc, 0)
+vm_map returned 0x600030000
+                                        returning to (61739) with r|w pages:
+                                        rw      vpage 0x60000   ppage 0x1
+                                        rw      vpage 0x60001   ppage 0x2
+vm_fault        (0x600020000, read)
+file_read       (papers.txt, 0)
+vm_fault returned 0
+                                        returning to (61739) with r|w pages:
+                                        rw      vpage 0x60000   ppage 0x1
+                                        rw      vpage 0x60001   ppage 0x2
+                                        r       vpage 0x60002   ppage 0x3
+vm_fault        (0x600030002, read)
+file_write      (<swap>, 0)
+file_read       (, 0)
+open: No such file or directory
+vm_fault returned -1
+                                        returning to (61739) with r|w pages:
+                                        r       vpage 0x60003   ppage 0x1
+vm_destroy

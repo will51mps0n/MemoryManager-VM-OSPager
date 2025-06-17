@@ -1,0 +1,4 @@
+In main, creating a swap back page
+Mapped swap-backed page at 0x600000000
+reading the data: this is the data we WRITE! This Should trigger the writefault and be output
+Done with test. Returning

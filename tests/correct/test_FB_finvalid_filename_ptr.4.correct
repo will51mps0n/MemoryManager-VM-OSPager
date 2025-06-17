@@ -1,0 +1,4 @@
+In main, mapping a new file to invalid block
+Casting result to failed
+vm_map failed
+Done with testing a failure

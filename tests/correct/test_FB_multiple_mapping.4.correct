@@ -1,0 +1,7 @@
+In main, mapping a new page to swap block
+copying file name into block
+Creating page A, file block to fname
+Creating page B, also a file block to fname
+Writing to page A
+Checking if that the write to A doesnt reflects B's page memory
+The aliasing should not be happening, outputting page B not be X: X But this should X

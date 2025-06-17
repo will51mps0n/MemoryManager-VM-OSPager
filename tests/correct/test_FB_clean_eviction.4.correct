@@ -1,0 +1,6 @@
+In main, about to call to file name with null ptr
+str copy, reading from a file into a swap block. Maybe wrong
+str cpy success
+writing to a new page p1 using vm map and file. File backed
+reading char p1 at 0
+done

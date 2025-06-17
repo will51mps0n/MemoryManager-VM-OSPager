@@ -1,0 +1,4 @@
+Mapping to a swap back page
+Reading from teh swap backed page. Should change state and work
+Setting it to self lol. Writing from the read should be 1 1 now
+Test done
