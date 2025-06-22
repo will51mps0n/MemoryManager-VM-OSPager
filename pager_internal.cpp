@@ -15,40 +15,74 @@ std::string read_filename_from_arena(const char* filenamePtr, Process& process){
     uintptr_t base = reinterpret_cast<uintptr_t>(VM_ARENA_BASEADDR);
     uintptr_t max = base + VM_ARENA_SIZE;
 
+    uintptr_t ptr = reinterpret_cast<uintptr_t>(filenamePtr);
+
+    // Read each character in the char*
     while (true) {
-        uintptr_t vaddr = reinterpret_cast<uintptr_t>(filenamePtr);
-        //std::cerr << base << " " << vaddr << "\n";
         // Not in a valid place
-        if (vaddr < base || vaddr >= max) {
-            //std::cerr << "here\n";
-            return "n"; 
+        if (ptr < base || ptr >= max) {
+            return "bad-name";
         }
-        // This is if its not resident. If if its not then fault it in
-        unsigned int vpn = (vaddr - base) / VM_PAGESIZE;
-        unsigned int offset = (vaddr - base) % VM_PAGESIZE;
 
+        // Find virtual page number + offset for this character
+        unsigned int vpn = (ptr - base) / VM_PAGESIZE;
+        unsigned int offset = (ptr - base) % VM_PAGESIZE;
+
+        // Invalid filename pointer
         if (!process.OSTable[vpn].valid) {
-            return "";
+            return "bad-name";
         }
 
-        // Page not resident? Fault it in.
-        if (!process.OSTable[vpn].resident) {
-            if (vm_fault(reinterpret_cast<const void*>(vaddr), false) == -1) {
-                return "";
+        // Fault in non-resident pages
+        if (!process.pageTable[vpn].read_enable) {
+            // If the vm_fault fails we know we have a bad name
+            if (vm_fault(reinterpret_cast<const void*>(ptr), false) == -1) {
+                return "bad-name";
             }
         }
 
+        // Find physical page of the jawn we're looking at
         int ppn = process.pageTable[vpn].ppage;
-        
-        if (ppn >= PagerState::memoryPages) {
-            return "";
+
+        if (ppn < 0 || ppn >= PagerState::memoryPages) {
+            return "bad-name";
         }
+
+        // In all cases, set the physical memory to referenced
+        PagerState::physicalMemoryInfo[ppn].referenced = true;
+
+        // Now, we have to set the read/write bits for all the associated pages
+        // File-backed case (update all linked file-backed pages)
+        if (process.OSTable[vpn].fileBacked) {
+            // Update incoming virtual page and its bretheren
+            auto key = std::make_pair(process.OSTable[vpn].filename, process.OSTable[vpn].fileBlockNum);
+            auto it = PagerState::boundFileBacked.find(key);
+
+            if (it != PagerState::boundFileBacked.end()) {
+                const auto& ownerSet = it->second;
+                // Iterate through set of <pid, vpn> pairs
+                for (const auto& [p, v] : ownerSet) {
+                    PagerState::processMap[p].pageTable[v].read_enable = 1;
+                    PagerState::processMap[p].pageTable[v].write_enable = process.OSTable[vpn].dirty;
+                }
+            }
+            
+        }
+        // Swap-backed case (update just the one owner)
+        else {
+            process.pageTable[vpn].read_enable = true;
+            process.pageTable[vpn].write_enable = process.OSTable[vpn].dirty;
+        }
+
         char* phys = static_cast<char*>(vm_physmem) + ppn * VM_PAGESIZE;
         char byte = phys[offset];
-        result.push_back(byte);
+        
+        // Break before we push back the null terminator into result
         if (byte == '\0') break;
+        
+        result.push_back(byte);
 
-        filenamePtr++;
+        ptr++;
     }
     return result;
  }
@@ -86,171 +120,161 @@ void initSwapBackedPageTable(Process& process, unsigned int vpn){
     process.pageTable[vpn].ppage = 0;
 }
 
-void updateSwapBackedPage(int vpn, Process& process, bool resident) {
-    if(!resident) {
-        update_os_table_entry(0, vpn, false, false, process.OSTable[vpn].swapBlock, process);
-        update_page_table_entry(0, vpn, false, false, process);
-    }
-}
-
-/* 
- * initialize_OS_table_entry
- * Resets the meta data of a virtual page using the default constructor
+/*
+ * Runs the clock algorithm until it finds a page to evict.
+ * Evicted page is written back if dirty, it's page tables are updated, and physicalMemory is freed
+ * Subtract from clockQueue + add to freeMemoryBlocks
  */
-void update_page_table_entry(unsigned int ppn, unsigned int vpn, bool read_enable, bool write_enable, Process& process) {
-    process.pageTable[vpn].ppage = ppn;
-    process.pageTable[vpn].read_enable = static_cast<int>(read_enable);
-    process.pageTable[vpn].write_enable = static_cast<int>(write_enable);
-}
-
-void update_os_table_entry(unsigned int ppn, unsigned int vpn, bool read_enable, bool write_enable, int swapBlock, Process& process) {
-    process.OSTable[vpn].resident = read_enable;
-    process.OSTable[vpn].swapBlock = swapBlock;
-    process.OSTable[vpn].physicalPage = ppn;
-}
-
-void updatePhysicalPage(unsigned int ppn, unsigned int vpn, bool dirty, bool referenced, bool read_enable, bool write_enable) {
-    auto& page = PagerState::physicalMemoryInfo[ppn];
-    page.dirty = dirty;
-    page.referenced = referenced;
-    //page.ownerInfo[PagerState::currentProcessID].push_back(vpn);
-    
-}
-
-/* 
- * update_page_table_entry
- * updates a page table entry to the specified ppn, and sets the read and write enable bits for that entry
- * returns 0 on failure
- */
-void initialize_OS_table_entry(Process& process, unsigned int vpn, bool valid, bool filebacked, std::string filename, unsigned int block) {
-    process.OSTable[vpn] = VirtualPageData(); 
-    process.OSTable[vpn].valid = valid;
-    process.OSTable[vpn].fileBacked = filebacked;
-    process.OSTable[vpn].fileBlockNum = block;
-    process.OSTable[vpn].filename = filename;
-    
-    // Set swapBlock, ensuring there's a swap space available (eager swap reservation)
-    if (!filebacked) {
-        process.OSTable[vpn].swapBlock = PagerState::freeSwapBlocks.front();
-        PagerState::freeSwapBlocks.pop_front();
-    }else {
-        process.OSTable[vpn].swapBlock = -1;
-    }
-    process.numValidPages++;
-}
-
-void Clock::initialize(unsigned int size) {
-    for (unsigned int i = 1; i < size; i ++) {
-        clockQueue.push_back(i);
-    }
- }
- 
- unsigned int Clock::evict_from_clock() {
+ unsigned int Clock::evict_and_update_clock() {
     //std::cerr << "in clock\n";
+    assert(clockQueue.size() == size_t(PagerState::memoryPages - 1));
     unsigned int ppn = 0;
     while (true) {
+        // Iterate clock cycle
         ppn = clockQueue.front();
-        //std::cerr << ppn << " clock\n";
-        clockQueue.pop_front();
-        void* phys_addr = static_cast<char*>(vm_physmem) + ppn * VM_PAGESIZE;
-        auto& page = PagerState::physicalMemoryInfo[ppn];
 
-        // Give it warning
-        if (page.referenced) {
-            page.referenced = false;
-            if (!page.fileBacked) {
-                auto& ownerInfoList = page.ownerInfo;
-                auto it = ownerInfoList.begin();
-                assert(it != ownerInfoList.end()); 
-                pid_t ownerPid = it->first;
-                auto& vpnList = it->second;
-                assert(!vpnList.empty());
-                auto& process = PagerState::processMap[ownerPid];
-                update_page_table_entry(ppn, vpnList.front(), false, false, process);
+        void* phys_addr = static_cast<char*>(vm_physmem) + ppn * VM_PAGESIZE;
+        auto& physicalPage = PagerState::physicalMemoryInfo[ppn];
+
+        // REFERENCED PAGE --> Give it warning (for all of these we set read/write access to zero)
+        if (physicalPage.referenced) {
+            physicalPage.referenced = false;
+            // auto& process = PagerState::processMap[PagerState::currentProcessID];
+
+            /*
+             * In the following section we set r/w to zero for all pages that refer to this
+             * physical page. This gives us a chance to set referenced bit back to 1
+             * on next access to this page (Manos lecture 15 at 1:17:00) 
+             */
+
+            // Swap-backed case (just update the current owner bits)
+            if (!physicalPage.fileBacked) {
+                pid_t tempProcess = PagerState::physicalMemoryInfo[ppn].ownerInfo.first;
+                unsigned int tempVPN = PagerState::physicalMemoryInfo[ppn].ownerInfo.second;
+                // std::cerr << "Owner Info VPN: " << tempVPN << "\n";
+                PagerState::processMap[tempProcess].pageTable[tempVPN].read_enable = 0;
+                PagerState::processMap[tempProcess].pageTable[tempVPN].write_enable = 0;
             }
+            // File-backed case (use boundFileBacked for bit updates)
             else {
-                auto& fileMap = PagerState::fileBackMap[page.filename][page.fileBlockNum];
-                for (auto& pair : fileMap) {
-                    for (auto& vpn_p : pair.second) {
-                        auto& fileProcess = PagerState::processMap[pair.first];
-                        update_page_table_entry(ppn, vpn_p, false, false, fileProcess);
+                // Find pid, vpn for each filename::block combo
+                auto key = std::make_pair(physicalPage.filename, physicalPage.fileBlockNum);
+                auto it = PagerState::boundFileBacked.find(key);
+
+                if (it != PagerState::boundFileBacked.end()) {
+                    const auto& ownerSet = it->second;
+                    // Iterate through set of <pid, vpn> pairs
+                    for (const auto& [pid, vpn] : ownerSet) {
+                        PagerState::processMap[pid].pageTable[vpn].read_enable = 0;
+                        PagerState::processMap[pid].pageTable[vpn].write_enable = 0;
                     }
                 }
             }
-            clockQueue.push_back(ppn);
         }
-        // Evict
+        // UNREFERENCED PAGE --> Evict
         else {
-            // Evicit File-backed
-            if (page.fileBacked) {
-                //std::cerr << "here2\n";
-                auto& fileMap = PagerState::fileBackMap[page.filename][page.fileBlockNum];
-                for (auto& pair : fileMap) {
-                    for (auto& vpn_p : pair.second) {
-                        //std::cerr << "fileBack update table entry\n";
-                        auto& fileProcess = PagerState::processMap[pair.first];
-                        update_page_table_entry(ppn, vpn_p, false, false, fileProcess);
-                        update_os_table_entry(ppn, vpn_p, false, false, page.fileBlockNum, fileProcess);
+            // Evict File-backed
+            if (physicalPage.fileBacked) {
+                if (physicalPage.dirty) {
+                    // This write should never fail. From piazza: "Once a file is accessible, it should ALWAYS be accessible"
+                    // Therefore, if we've read from it before (and as a result, it exists in physical memory and can be evicted),
+                    // we can assume the write will never fail.
+                    // However, this return 0 is still here as a sanity check
+                    if (file_write(physicalPage.filename.c_str(), physicalPage.fileBlockNum, phys_addr) != 0) {
+                        return 0;
                     }
                 }
-                if (page.dirty) {
-                    int result = file_write(page.filename.c_str(), page.fileBlockNum, phys_addr);
-                    assert(result == 0);
+
+                // THIS UPDATES ALL OUTGOING PAGES:
+
+                // Find pid, vpn for each filename::block combo that's in the current page
+                auto key = std::make_pair(physicalPage.filename, physicalPage.fileBlockNum);
+                auto it = PagerState::boundFileBacked.find(key);
+
+                // Updates evicted page tables 
+                if (it != PagerState::boundFileBacked.end()) {
+                    const auto& ownerSet = it->second;
+                    // Iterate through set of <pid, vpn> pairs
+                    for (const auto& [pid, vpn] : ownerSet) {
+                        // Sets evicted bits
+                        PagerState::processMap[pid].pageTable[vpn].read_enable = 0;
+                        PagerState::processMap[pid].pageTable[vpn].write_enable = 0;
+
+                        PagerState::processMap[pid].OSTable[vpn].dirty = false;
+                        PagerState::processMap[pid].OSTable[vpn].resident = false;
+                        PagerState::processMap[pid].OSTable[vpn].physicalPage = -1;
+                    }
                 }
-                PagerState::physicalMemoryInfo[ppn].fileBacked = false;
             }
+                
             // Evict Swap-backed
             else {
-                //std::cerr << "here\n";
-                // Assuming swap back always only have one owner
-                auto& ownerInfoList = page.ownerInfo;
-                auto it = ownerInfoList.begin();
-                assert(it != ownerInfoList.end()); 
-                pid_t ownerPid = it->first;
-                auto& vpnList = it->second;
-                assert(!vpnList.empty()); 
-                auto& process = PagerState::processMap[ownerPid];
-                //std::cerr << "vpnlist size " << vpnList.size() << "\n";
-                for (unsigned int i = 0; i < vpnList.size(); i++) {
-                    unsigned int vpn = vpnList[i];
-                    int swapBlock = process.OSTable[vpn].swapBlock;
-                    assert(swapBlock != -1);
-                    // May need to check for failure
-                    if (page.dirty) {
-                        if(file_write(nullptr, swapBlock, phys_addr) == 0) {
-                            //std::cerr << "vpn " << vpn << " ppn " << ppn << "\n";
-                        }
+                // If a page is dirty there will only ever be one owner
+                pid_t tempPID = physicalPage.ownerInfo.first;
+                unsigned int tempVPN = physicalPage.ownerInfo.second;
+                // Write if swap-backed page is dirty
+                if (physicalPage.dirty) {
+                    // This write should never fail. From piazza + .h file above to file_read/file_write:
+                    // "A write to the swap space should never fail"
+                    // However, this return 0 is still here as a sanity check
+                    unsigned int swapBlock = PagerState::processMap[tempPID].OSTable[tempVPN].swapBlock;
+                    if (file_write(nullptr, swapBlock, phys_addr) != 0) {
+                        return 0;
                     }
-                    updateSwapBackedPage(vpn, process, false);
                 }
+                /*
+                 * OUTGOING PAGE TABLE + OS TABLE
+                 */
+                PagerState::processMap[tempPID].pageTable[tempVPN].read_enable = 0;
+                PagerState::processMap[tempPID].pageTable[tempVPN].write_enable = 0;
+
+                PagerState::processMap[tempPID].OSTable[tempVPN].dirty = false;
+                PagerState::processMap[tempPID].OSTable[tempVPN].resident = false;
+                PagerState::processMap[tempPID].OSTable[tempVPN].physicalPage = -1;
+
             }
-            // Always set 
-            page.ownerInfo.clear();
-            // vpn doesnt matter here - pass in 0 
+
+            physicalPage.dirty = false;
+            physicalPage.free = true;
+            physicalPage.referenced = false;
+            
+            // Remove evicted page from the clock queue + push it to freeMemoryBlocks
+            clockQueue.pop_front();
+            PagerState::freeMemoryBlocks.push_front(ppn);
+
+            // Once block is evicted, break out of the while loop
             break;
         }
-    }              
-    PagerState::physicalMemoryInfo[ppn].dirty = false;
-    //std::cerr << ppn << " im lost\n";
+
+        // No eviction happens, advance clock hand after dereferencing.
+        clockQueue.pop_front();
+        clockQueue.push_back(ppn);
+    }
+    assert(ppn != 0);
     return ppn;
 }
 
-unsigned int Clock::get_ppn() {
-    
-    std::deque<unsigned int>& clock = PagerState::evictionClock.clockQueue;
-    
-    // Looks for the first free page in clock
-    for (unsigned int i = 0; i < clock.size(); ++i) {
-        // If we find a free page, we will write to it (no longer free), push it to end of clock, and erase where it was before
-        if (PagerState::physicalMemoryInfo[clock[i]].free) {
-            PagerState::physicalMemoryInfo[clock[i]].free = false;
-            int ppn = clock[i];
-            clock.push_back(ppn);
-            clock.erase(clock.begin() + i);
-            return ppn;
-        }
+/*
+ * The idea with this function is to either take one of the free existing memory slots
+ * OR to evict using clock. Both of these cases should update the PhysicalMemoryInfo.
+ * Clock eviction (above) should also update the OSTable, Page Table, etc. for the outgoing page.
+ */
+unsigned int get_open_page() {
+    unsigned int ppn;
+    // If we have free memory blocks, just use one of those
+    if (PagerState::freeMemoryBlocks.size() > 0) {
+        // If free memory slot exists, don't even use clock
+        ppn = PagerState::freeMemoryBlocks.front();
+
+        // We wait until the read in succeeds to pop it from freeMemoryBlocks + add it to clock queue
+
     }
-    // No free page so we have to evict to get it
-    return PagerState::evictionClock.evict_from_clock();
+    // If no free blocks, evict from the clock (this updates what we need for OS + Page tables)
+    else {
+        ppn = PagerState::evictionClock.evict_and_update_clock();
+    }
+
+    return ppn;
+
 }
 

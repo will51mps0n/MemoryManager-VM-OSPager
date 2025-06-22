@@ -25,14 +25,11 @@ struct PhysicalPageData {
     bool referenced = false;
     bool dirty = false;
     bool valid = false;
-    // bool read_enable = false;
-    // bool write_enable = false;
     bool fileBacked = false;
     int fileBlockNum = -1;
     std::string filename = "";
-    std::map<pid_t, std::vector<unsigned int>> ownerInfo;
-    
-    unsigned int get_ref_count() { return ownerInfo.size(); }
+
+    std::pair<pid_t, unsigned int> ownerInfo;
 };
 
 struct VirtualPageData {
@@ -59,16 +56,17 @@ struct Process {
 
 struct Clock {
     std::deque<unsigned int> clockQueue;
-
-    unsigned int get_ppn();
-    void initialize(unsigned int size);
-    unsigned int evict_from_clock();
+    //void initialize(unsigned int size);
+    unsigned int evict_and_update_clock();
 };
 
 namespace PagerState {
     inline std::vector<PhysicalPageData> physicalMemoryInfo;
-    inline std::map<std::string, std::map<int, std::map<pid_t, std::vector<int>>>> fileBackMap; 
     inline std::map<pid_t, Process> processMap;
+
+    // Used for identifying and maintaining file-backed pages pointing to same file::block combo
+    inline std::map<std::pair<std::string, unsigned int>, std::set<std::pair<pid_t, unsigned int>>> boundFileBacked;
+
     inline pid_t currentProcessID = 0;
     inline int memoryPages = 0;
     inline unsigned int zeroPage = 0;
@@ -82,7 +80,6 @@ namespace PagerState {
 
 
 std::string read_filename_from_arena(const char* filenamePtr, Process& process);
-void updatePhysicalPage(unsigned int ppn, unsigned int vpn, bool dirty, bool referenced, bool read_enable, bool write_enable);
 
 inline std::string makeFileKey(const std::string& filename, unsigned int block) {
     return filename + std::to_string(block);
@@ -91,8 +88,8 @@ void initSwapBackedOS(Process& process, unsigned int vpn);
 void initSwapBackedPageTable(Process& process, unsigned int vpn);
 
 void updateSwapBackedPage(int vpn, Process& process, bool resident);
+unsigned int get_open_page();
 
-void update_os_table_entry(unsigned int ppn, unsigned int vpn, bool read_enable, bool write_enable, int swapBlock, Process& process);
 void initialize_OS_table_entry(Process& process, unsigned int vpn, bool valid, bool filebacked, std::string filename, unsigned int block);
 void update_page_table_entry(unsigned int ppn, unsigned int vpn, bool read_enable, bool write_enable, Process& process);
 #endif // PAGER_INTERNAL_H
